@@ -299,21 +299,50 @@ cat("\n--- Table 6: Post-hoc pairwise contrasts (Holm-adjusted) ---\n")
 print(table6)
 
 # =============================================================================
-# 9. TABLE 7: Descriptive summary of sq_error per treatment and prompt
+# 9. TABLE 7: QWK per treatment x prompt
 # =============================================================================
+
+# Quadratic weighted kappa computed from scratch —
+# no external package needed, works directly on numeric grade vectors.
+compute_qwk <- function(actual, predicted) {
+    # Build confusion matrix over the union of observed levels
+    grades  <- sort(unique(c(actual, predicted)))
+    n       <- length(grades)
+    mat     <- matrix(0, nrow = n, ncol = n,
+                      dimnames = list(grades, grades))
+    for (i in seq_along(actual)) {
+        r <- as.character(actual[i])
+        c <- as.character(predicted[i])
+        mat[r, c] <- mat[r, c] + 1
+    }
+
+    # Weight matrix: w_ij = (i - j)^2 / (n - 1)^2
+    wt <- outer(seq_len(n), seq_len(n),
+                function(i, j) (i - j)^2 / (n - 1)^2)
+
+    row_sum <- rowSums(mat)
+    col_sum <- colSums(mat)
+    total   <- sum(mat)
+
+    # Expected matrix under independence
+    expected <- outer(row_sum, col_sum) / total
+
+    numerator   <- sum(wt * mat)       / total
+    denominator <- sum(wt * expected)  / total
+
+    1 - numerator / denominator
+}
 
 table7 <- dat %>%
     group_by(Treatment = treatment, Prompt = prompt_name) %>%
     summarise(
-        N      = n(),
-        Mean   = round(mean(sq_error),   3),
-        SD     = round(sd(sq_error),     3),
-        Median = round(median(sq_error), 3),
+        N   = n(),
+        QWK = round(compute_qwk(score, AI_grade), 3),
         .groups = "drop"
     ) %>%
     arrange(Treatment, Prompt)
 
-cat("\n--- Table 7: Descriptive summary of sq_error per treatment x prompt ---\n")
+cat("\n--- Table 7: QWK per treatment x prompt ---\n")
 print(table7)
 
 # =============================================================================
