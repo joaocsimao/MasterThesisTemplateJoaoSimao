@@ -5,7 +5,7 @@ supporting data, analysis code, and outputs.
 
 ## Overview
 
-The tests are built in a **modular** way: each test pulls its data from a clearly
+The tests are built in a modular way: each test pulls its data from a clearly
 defined source, so you can try them out with your own data simply by changing where
 the test reads from.
 
@@ -13,8 +13,8 @@ the test reads from.
   [github.com/scrosseye/ASAP_2.0](https://github.com/scrosseye/ASAP_2.0) and is
   provided under the Attribution 4.0 International (CC BY 4.0)
   [license](https://creativecommons.org/licenses/by/4.0/).
-- **IAVE** data is **not** included, as it is confidential. However, the **IAVE
-  questions themselves are provided** (see `IAVEQuestions.txt`) for reference.
+- **IAVE** data is **not** included, as it is confidential. However, the IAVE
+  questions themselves are provided (see `IAVEQuestions.txt`) for reference.
 
 ## Repository Structure
 
